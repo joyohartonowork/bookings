@@ -23,5 +23,23 @@ func routes(app *config.AppConfig) http.Handler {
 
 	mux.Get("/", handlers.Repo.Home)
 	mux.Get("/about", handlers.Repo.About)
+
+	fileServer := http.FileServer(http.Dir("../../static/"))
+	mux.Handle("/static/*", http.StripPrefix("/static", fileServer))
+	//println(fmt.Sprintln(fileServer))
+
+	//pages, _ := filepath.Glob("../../static") //tmpl
+	//println(fmt.Sprintln(pages))
+
+	// test print current directory files
+	// files, err := ioutil.ReadDir("./")
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	// for _, f := range files {
+	// 	fmt.Println(f.Name())
+	// }
+
 	return mux
 }

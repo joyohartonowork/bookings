@@ -1,0 +1,85 @@
+{{template "base" .}}
+
+{{define "content"}}
+<div class="container">
+          <div class="row">
+            <div class="col">
+                <img src="/static/images/generals-quarters.png" class="img-fluid img-thumbnail mx-auto d-block room-image" alt="image rooms">
+            </div>
+          </div>
+          <div class="row">
+              <div class="col">
+                  <h1 class="text-center mt-4">Generals rooms</h1>
+                  <p>your home away..your home away..your home away..your home away..your home away..your home away..your home away..your home away..</p>
+              </div>
+          </div>
+          <div class="row">
+            <div class="col text-center">                
+                <!-- <a href="/make-reservation-gq" class="btn btn-secondary" id="check">Check Avaibility</a> -->
+                <button class="btn btn-outline-success" type="submit" id="check-availability-button">Check Avaibility</button>
+            </div>
+          </div>          
+      </div>
+{{end}}
+
+{{define "js"}}
+<script>
+  document.getElementById("check-availability-button").addEventListener("click",function(){
+
+    let attention = prompt();
+
+    let html=`
+    <form id="check-availability-form" action="" menthod="POST" novalidate class="needs-validation">
+      <div class="row g-3">
+        <div class="col">
+          <div class="row" id="reservation-dates-modal">
+            <div class ="col-md-6">
+              <input disabled required class="form-control" type="text" name="start" id="start" placeholder="Arrival">
+            </div>
+            <div class ="col-md-6">
+              <input disabled required class="form-control" type="text" name="end" id="end" placeholder="Depature">
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    `
+
+  
+    attention.custom({
+      msg:html,
+      title:"Choose Your Dates",
+
+      willOpen:()=>{
+              const elem = document.getElementById('reservation-dates-modal');
+              const rp = new DateRangePicker(elem, {
+              // ...options
+              format:"yyyy-mm-dd",
+              ShowOnFocus:true,
+              })
+            },
+      didOpen:()=>{
+        document.getElementById('start').removeAttribute('disabled'),
+        document.getElementById('end').removeAttribute('disabled')
+      },
+      callback(result){        
+        console.log("called");
+
+        let form = document.getElementById("check-availability-form");
+        let formData =  new FormData(form);        
+        formData.append("csrf_token","{{.CSRFToken}}");
+
+        fetch('/search-availability-json',{
+          method : "Post",
+          body :formData,
+        })
+          .then(Response => Response.json())
+          .then(data => {
+              console.log(data);
+          })
+        }
+      }
+    );
+  })
+  </script>
+{{end}}

@@ -20,29 +20,11 @@ var app config.AppConfig
 var session *scs.SessionManager
 
 func main() {
-	//What am i going  to put in the session
-	gob.Register(models.Reservation{})
-	// change true in prod otherwise false
-	app.InProduction = false
+	err := run()
 
-	session = scs.New()
-	session.Lifetime = 24 * time.Hour
-	session.Cookie.Persist = true
-	session.Cookie.SameSite = http.SameSiteLaxMode
-	session.Cookie.Secure = app.InProduction
-
-	app.Session = session
-
-	tc, err := render.CreateTemplateCache()
 	if err != nil {
-		log.Fatal("cant create template  cache")
+		log.Fatal(err)
 	}
-
-	app.TemplateChache = tc
-	app.UseCache = false
-	repo := handlers.NewRepo(&app)
-	handlers.NewHandlers(repo)
-	render.NewTemplate(&app)
 
 	//http.HandleFunc("/", handlers.Repo.Home)
 	//http.HandleFunc("/about", handlers.Repo.About)
@@ -59,4 +41,32 @@ func main() {
 	err = srv.ListenAndServe()
 	log.Fatal(err)
 
+}
+
+func run() error {
+	//What am i going  to put in the session
+	gob.Register(models.Reservation{})
+	// change true in prod otherwise false
+	app.InProduction = false
+
+	session = scs.New()
+	session.Lifetime = 24 * time.Hour
+	session.Cookie.Persist = true
+	session.Cookie.SameSite = http.SameSiteLaxMode
+	session.Cookie.Secure = app.InProduction
+
+	app.Session = session
+
+	tc, err := render.CreateTemplateCache()
+	if err != nil {
+		log.Fatal("cant create template  cache")
+		return err
+	}
+
+	app.TemplateChache = tc
+	app.UseCache = false
+	repo := handlers.NewRepo(&app)
+	handlers.NewHandlers(repo)
+	render.NewTemplate(&app)
+	return nil
 }

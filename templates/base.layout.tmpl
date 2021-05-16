@@ -145,6 +145,20 @@
         confirmButtonText: confirmButtonText,
         })
     }
+
+    {{with .Error}}
+    notify("{{.}}","error")
+    {{end}}
+
+    {{with .Flash}}
+    notify("{{.}}","success")
+    {{end}}
+
+    {{with .Warning}}
+    notify("{{.}}","warning")
+    {{end}}
+
+
     // prompt message -> currently used in major and generals rooms popout date picker
       function prompt(){
 

@@ -54,7 +54,7 @@ func getRoutes() http.Handler {
 
 	mux.Use(middleware.Recoverer)
 	//mux.Use(WriteToConsole)
-	mux.Use(NoSurf)
+	//mux.Use(NoSurf)
 	mux.Use(SessionLoad)
 
 	mux.Get("/", Repo.Home)
@@ -74,20 +74,6 @@ func getRoutes() http.Handler {
 
 	fileServer := http.FileServer(http.Dir("../../static/"))
 	mux.Handle("/static/*", http.StripPrefix("/static", fileServer))
-	//println(fmt.Sprintln(fileServer))
-
-	//pages, _ := filepath.Glob("../../static") //tmpl
-	//println(fmt.Sprintln(pages))
-
-	// test print current directory files
-	// files, err := ioutil.ReadDir("./")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	// for _, f := range files {
-	// 	fmt.Println(f.Name())
-	// }
 
 	return mux
 
